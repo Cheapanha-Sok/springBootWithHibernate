@@ -22,30 +22,36 @@ public class FacultyService {
     public Optional<Faculty> getFaculty(Long facultyId){
         return facultyRepository.findById(facultyId);
     }
-
+    @Transactional
     public void createFaculty(Faculty faculty) {
         facultyRepository.save(faculty);
     }
-
-    public void deleteFaculty(Long facultyId) {
+    @Transactional
+    public boolean deleteFaculty(Long facultyId) {
         boolean isExist = facultyRepository.existsById(facultyId);
-        if (!isExist){
-            throw new IllegalStateException("Faculty with id " +facultyId + " not found");
+        if (isExist){
+            facultyRepository.deleteById(facultyId);
+            return true;
         }
-        facultyRepository.deleteById(facultyId);
+        return false;
     }
     @Transactional
-    public void updateFaculty(Long facultyId, String facultyName, String deanName, Integer officeNumber) {
-        Faculty faculty = facultyRepository.findById(facultyId).
-                orElseThrow(()->new IllegalArgumentException("Faculty with id "+facultyId +" not found"));
-        if (facultyName != null && !facultyName.isEmpty()){
-            faculty.setFacultyName(facultyName);
+    public boolean updateFaculty(Long facultyId, Faculty updateFaculty ) {
+        Optional<Faculty> optionalFaculty = facultyRepository.findById(facultyId);
+        if (optionalFaculty.isPresent()) {
+            Faculty existingCourse = optionalFaculty.get();
+            if (updateFaculty.getFacultyName() != null && !updateFaculty.getFacultyName().isEmpty()) {
+                existingCourse.setFacultyName(updateFaculty.getFacultyName());
+            }
+            if (updateFaculty.getDeanName() != null && !updateFaculty.getDeanName().isEmpty()) {
+                existingCourse.setDeanName(updateFaculty.getDeanName());
+            }
+            if (updateFaculty.getOfficeNumber() != null) {
+                existingCourse.setOfficeNumber(updateFaculty.getOfficeNumber());
+            }
+            facultyRepository.save(existingCourse);
+            return true;
         }
-        if (deanName !=null && !deanName.isEmpty()){
-            faculty.setDeanName(deanName);
-        }
-        if (officeNumber!=null){
-            faculty.setOfficeNumber(officeNumber);
-        }
+        return false;
     }
 }

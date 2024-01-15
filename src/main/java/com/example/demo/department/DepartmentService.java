@@ -29,13 +29,14 @@ public class DepartmentService {
     }
 
     @Transactional
-    public void addNewDepartment(Department department, Long facultyId) {
-        Faculty faculty = facultyRepository.findById(facultyId)
-                .orElseThrow(() -> new IllegalArgumentException("Faculty not found with ID: " + facultyId));
-        // Set the faculty for the department using only the ID
-        department.setFaculty(faculty);
-
-        departmentRepository.save(department);
+    public boolean addNewDepartment(Department department, Long facultyId) {
+        Optional<Faculty> faculty = facultyRepository.findById(facultyId);
+        if (faculty.isPresent()){
+            department.setFaculty(faculty.get());
+            departmentRepository.save(department);
+            return true;
+        }
+        return false;
     }
 
     @Transactional
@@ -51,21 +52,22 @@ public class DepartmentService {
     }
 
     @Transactional
-    public String updateDepartment(Long departmentId, String departmentName, String headName, Integer officeNumber) {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Department with id " + departmentId + " not found"));
-
-        if (departmentName != null && !departmentName.isEmpty()) {
-            department.setDepartmentName(departmentName);
+    public boolean updateDepartment(Long departmentId, Department updatedepartment) {
+        Optional<Department> department = departmentRepository.findById(departmentId);
+        if (department.isPresent()) {
+            Department existingDepartment = department.get();
+            if (updatedepartment.getDepartmentName() != null && !updatedepartment.getDepartmentName().isEmpty()) {
+                existingDepartment.setDepartmentName(updatedepartment.getDepartmentName());
+            }
+            if (updatedepartment.getHeadName() != null && !updatedepartment.getHeadName().isEmpty()) {
+                existingDepartment.setHeadName(updatedepartment.getHeadName());
+            }
+            if (updatedepartment.getOfficeNumber() != null) {
+                existingDepartment.setOfficeNumber(updatedepartment.getOfficeNumber());
+            }
+            departmentRepository.save(existingDepartment);
+            return true;
         }
-        if (headName != null) {
-            department.setHeadName(headName);
-        }
-        if (officeNumber != null) {
-            department.setOfficeNumber(officeNumber);
-        }
-
-        departmentRepository.save(department);
-        return "Department with id " + departmentId + " updated successfully";
+        return false;
     }
 }

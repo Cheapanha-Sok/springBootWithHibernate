@@ -66,14 +66,12 @@ public class CourseController {
             map.put("message", "Record is deleted successfully!");
             return new ResponseEntity<>(map, HttpStatus.OK);
         } else {
-            map.clear();
             map.put("status", 0);
             map.put("message", "Course with id " + course_id + " not found");
             return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
         }
 
     }
-
     @PutMapping(path = "{course_id}")
     public ResponseEntity<?> updateCourse(
             @PathVariable("course_id") Long courseId,
@@ -86,7 +84,6 @@ public class CourseController {
             map.put("message", "Record is updated successfully!");
             return new ResponseEntity<>(map, HttpStatus.OK);
         } else {
-            map.clear();
             map.put("status", 0);
             map.put("message", "Course with id " + courseId + " not found");
             return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
