@@ -1,16 +1,11 @@
 package com.example.demo.student;
 
 import com.example.demo.department.Department;
-import com.example.demo.faculty.Faculty;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonMerge;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -37,6 +32,7 @@ public class Student {
     @Transient
     private Integer age;
     @Column(name = "Dob ")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate dob;
 
 

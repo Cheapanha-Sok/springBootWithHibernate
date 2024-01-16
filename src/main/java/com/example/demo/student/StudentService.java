@@ -1,5 +1,6 @@
 package com.example.demo.student;
 
+import com.example.demo.course.Course;
 import com.example.demo.department.Department;
 import com.example.demo.department.DepartmentRepository;
 import jakarta.transaction.Transactional;
@@ -31,53 +32,58 @@ public class StudentService {
         studentRepository.save(student);
     }
 
-    public void deleteStudent(Long studentId) {
+    public boolean deleteStudent(Long studentId) {
         boolean isExist = studentRepository.existsById(studentId);
-        if (!isExist){
-            throw new IllegalStateException("Student with id " + studentId + " not found" );
+        if (isExist){
+            studentRepository.deleteById(studentId);
+            return true;
         }
-        studentRepository.deleteById(studentId);
-
+        return false;
     }
     @Transactional
-    public void updateStudent(Long studentId,String studentName,String gender,LocalDate dob,String phoneNumber,String address,Integer generation,Integer studentYear,String degree) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalStateException("Student with id " + studentId + " not found"));
+    public boolean updateStudent(Long studentId, Student updateStudent) {
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
 
-        // Update individual attributes if they are not null or empty
-        if (studentName != null && !studentName.isEmpty()) {
-            student.setStudentName(studentName);
-        }
+        if (studentOptional.isPresent()) {
+            Student existingStudent = studentOptional.get();
 
-        if (gender!= null && !gender.isEmpty()) {
-            student.setGender(gender);
-        }
+            if (updateStudent.getStudentName() != null && !updateStudent.getStudentName().isEmpty()) {
+                existingStudent.setStudentName(updateStudent.getStudentName());
+            }
 
-        if (dob != null) {
-            student.setDob(dob);
-        }
+            if (updateStudent.getGender() != null && !updateStudent.getGender().isEmpty()) {
+                existingStudent.setGender(updateStudent.getGender());
+            }
 
-        if (phoneNumber != null && !phoneNumber.isEmpty()) {
-            student.setPhoneNumber(phoneNumber);
-        }
+            if (updateStudent.getDob() != null) {
+                existingStudent.setDob(updateStudent.getDob());
+            }
 
-        if (address != null && address.isEmpty()) {
-            student.setAddress(address);
-        }
+            if (updateStudent.getPhoneNumber() != null && !updateStudent.getPhoneNumber().isEmpty()) {
+                existingStudent.setPhoneNumber(updateStudent.getPhoneNumber());
+            }
 
-        if (generation != null) {
-            student.setGeneration(generation);
-        }
+            if (updateStudent.getAddress() != null && !updateStudent.getAddress().isEmpty()) {
+                existingStudent.setAddress(updateStudent.getAddress());
+            }
 
-        if (studentYear != null) {
-            student.setStudentYear(studentYear);
-        }
+            if (updateStudent.getStudentYear() != null) {
+                existingStudent.setStudentYear(updateStudent.getStudentYear());
+            }
 
-        if (degree!= null && !degree.isEmpty()) {
-            student.setDegree(degree);
+            if (updateStudent.getDegree() != null && !updateStudent.getDegree().isEmpty()) {
+                existingStudent.setDegree(updateStudent.getDegree());
+            }
+            if (updateStudent.getGeneration() != null){
+                existingStudent.setGeneration(updateStudent.getGeneration());
+            }
+
+            studentRepository.save(existingStudent);
+            return true;
         }
-        studentRepository.save(student);
+        return false;
     }
+
     @Transactional
     public void enrolledStudent(Long studentId, Long departmentId) {
         Student student = studentRepository.findById(studentId)

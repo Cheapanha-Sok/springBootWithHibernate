@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -23,39 +25,57 @@ public class TeacherController {
         return teacherService.getAllTeacher();
     }
     @GetMapping(path = "{teacher_id}")
-    public Optional<Teacher> getTeacher(@PathVariable("teacher_id") Long teacherId){
-        return teacherService.getTeacher(teacherId);
+    public ResponseEntity<?> getTeacher(@PathVariable("teacher_id") Long teacherId){
+        Map<String , Object> map= new LinkedHashMap<String , Object>();
+        Optional<Teacher> teacher = teacherService.getTeacher(teacherId);
+        if (teacher.isPresent()){
+            map.put("status" , 1);
+            map.put("Teacher" , teacher);
+            return new ResponseEntity<>(map , HttpStatus.OK);
+        }else{
+            map.put("status" , 0);
+            map.put("message" , "Teacher with id" + teacherId + "not founded") ;
+            return new ResponseEntity<>(map , HttpStatus.NOT_FOUND);
+        }
     }
     @PostMapping
-    public ResponseEntity<String> createTeacher(@RequestBody Teacher teacher){
-        try{
-            teacherService.createTeacher(teacher);
-            return ResponseEntity.status(HttpStatus.CREATED).header("Created").body("Created Teacher Success");
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("Error").body("Failed to Created Teacher");
-        }
-
+    public ResponseEntity<?> createTeacher(@RequestBody Teacher teacher){
+        Map<String , Object> map= new LinkedHashMap<String , Object>();
+        teacherService.createTeacher(teacher);
+        map.put("status", 1);
+        map.put("message", "Teacher is Saved Successfully");
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
     @DeleteMapping(path = "{teacher_id}")
-    public ResponseEntity<String> deleteTeacher(@PathVariable Long teacher_id){
-        try{
-            teacherService.deleteTeacher(teacher_id);
-            return ResponseEntity.status(HttpStatus.OK).header("Deleted").body("Deleted Teacher Success");
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("Error").body("Failed to Delete Teacher");
+    public ResponseEntity<?> deleteTeacher(@PathVariable Long teacher_id){
+        Map<String , Object> map= new LinkedHashMap<String , Object>();
+        boolean isDeleted = teacherService.deleteTeacher(teacher_id);
+        if (isDeleted) {
+            map.put("status", 1);
+            map.put("message", "Record is deleted successfully!");
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            map.put("status", 0);
+            map.put("message", "Teacher with id " + teacher_id + " not found");
+            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
         }
-
     }
     @PutMapping(path = "{teacher_id}")
-    public void updateTeacher(
+    public ResponseEntity<?> updateTeacher(
             @PathVariable ("teacher_id")Long teacherId,
-            @RequestParam (required = false) String teacherName,
-            @RequestParam(required = false) String gender,
-            @RequestParam(required = false) LocalDate dob,
-            @RequestParam(required = false) String address,
-            @RequestParam(required = false) String phoneNumber
-            ){
-        teacherService.updateTeacher(teacherId,teacherName,gender,dob,address,phoneNumber);
+            @RequestBody Teacher teacher){
+        Map<String , Object> map= new LinkedHashMap<String , Object>();
+        boolean isUpdated = teacherService.updateTeacher(teacherId , teacher);
+        if (isUpdated) {
+            map.put("status", 1);
+            map.put("message", "Record is updated successfully!");
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } else {
+            map.put("status", 0);
+            map.put("message", "Teacher with id " + teacherId + " not found");
+            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+        }
+
     }
     @PutMapping(path = "{teacher_id}/{course_id}")
     public void assignCourse(@PathVariable ("teacher_id") Long teacherId ,
