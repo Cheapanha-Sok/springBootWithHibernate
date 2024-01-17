@@ -3,6 +3,8 @@ package com.example.demo.course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.micrometer.common.lang.NonNull;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +28,7 @@ public class CourseService {
     public void createCourse(Course course) {
         courseRepository.save(course);
     }
-
+    @NonNull
     public boolean deleteCourse(Long courseId) {
         boolean isExist = courseRepository.existsById(courseId);
         if (isExist) {

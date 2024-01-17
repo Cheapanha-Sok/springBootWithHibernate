@@ -120,9 +120,8 @@ public class Teacher {
                 '}';
     }
 
-
-    public void setCourse(Course courseId) {
-        this.courses.add(courseId);
+    public void setCourse(Course course) {
+        this.courses.add(course);
     }
 
     public List<Course> getCourses() {
