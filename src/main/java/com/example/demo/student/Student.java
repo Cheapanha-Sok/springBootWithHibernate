@@ -136,6 +136,10 @@ public class Student {
         return dob;
     }
 
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
+    }
+
     @ManyToMany
     @JoinTable(
             name = "student_enrolled",
@@ -144,10 +148,6 @@ public class Student {
     )
     private List<Department> departments;
 
-    public void setDepartment(Department department)
-    {
-        this.departments.add(department);
-    }
     @Override
     public String toString(){
         return "Students{"+

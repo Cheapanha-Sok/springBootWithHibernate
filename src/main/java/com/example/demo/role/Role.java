@@ -18,7 +18,6 @@ public class Role {
     public Role(){
 
     }
-
     public Long getRoleId() {
         return roleId;
     }
@@ -42,12 +41,14 @@ public class Role {
     public Role(String roleName){
         this.roleName = roleName;
     }
-    @ManyToMany
-    @JoinTable(name = "role",
-    joinColumns = @JoinColumn(name = "role_id"),
-    inverseJoinColumns = @JoinColumn(name  = "account_id"))
-
+    @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
     private List<Account> accounts;
-
+    @Override
+    public String toString() {
+        return "Roles {" +
+                " Role Id=" + roleId +
+                " ,Role Name =" + roleName+
+                '}';
+    }
 
 }

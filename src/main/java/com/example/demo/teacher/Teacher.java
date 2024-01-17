@@ -2,6 +2,7 @@ package com.example.demo.teacher;
 
 import com.example.demo.course.Course;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "Teachers")
+
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -100,10 +102,12 @@ public class Teacher {
     public Integer getAge() {
         return Period.between(this.dob,LocalDate.now()).getYears();
     }
-    @ManyToMany
-    @JoinTable(name = "AssignCourse",
-            joinColumns = @JoinColumn(name = "teacher_id"),
-            inverseJoinColumns =@JoinColumn (name = "course_id"))
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
+    @ManyToMany(mappedBy = "teachers",fetch = FetchType.LAZY)
     private List<Course>courses;
 
     @Override
@@ -119,11 +123,6 @@ public class Teacher {
                 ", Course Id" + courses+
                 '}';
     }
-
-    public void setCourse(Course course) {
-        this.courses.add(course);
-    }
-
     public List<Course> getCourses() {
         return courses;
     }

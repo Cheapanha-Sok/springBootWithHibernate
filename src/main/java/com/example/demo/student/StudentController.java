@@ -55,13 +55,19 @@ public class StudentController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> registerNewStudent(@RequestBody Student student) {
-        studentService.addNewStudent(student);
+    @PostMapping("{department_id}")
+    public ResponseEntity<?> registerNewStudent(@RequestBody Student student , @PathVariable("department_id")Long departmentId) {
+        boolean isCreated = studentService.addNewStudent(student , departmentId);
         Map<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("status", 1);
-        map.put("message", "Student is Saved Successfully");
-        return new ResponseEntity<>(map, HttpStatus.CREATED);
+        if (isCreated) {
+            map.put("status", 1);
+            map.put("message", "Student is Saved Successfully");
+            return new ResponseEntity<>(map, HttpStatus.CREATED);
+        } else {
+            map.put("status", 0);
+            map.put("message", "Department with id " + departmentId + " not found");
+            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping(path = "{student_id}")
@@ -94,14 +100,5 @@ public class StudentController {
             map.put("message", "Student with id " + studentId + " not found");
             return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
         }
-    }
-
-    @PutMapping("{student_id}/{department_id}")
-    public void enrolledStudent(
-            @PathVariable("student_id") Long studentId,
-            @PathVariable("department_id") Long departmentId
-
-    ) {
-        studentService.enrolledStudent(studentId, departmentId);
     }
 }

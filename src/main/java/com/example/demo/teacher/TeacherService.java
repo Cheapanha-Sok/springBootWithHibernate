@@ -27,8 +27,15 @@ public class TeacherService {
         return teacherRepository.findById(teacherId);
     }
     @Transactional
-    public void createTeacher(Teacher teacher) {
-        teacherRepository.save(teacher);
+    public boolean createTeacher(Teacher teacher , Long courseId) {
+        Optional<Course> course = courseRepository.findById(courseId);
+        if (course.isPresent()){
+            teacher.setCourses(List.of(course.get()));
+            teacherRepository.save(teacher);
+            return true;
+        }
+        return false;
+
     }
     @Transactional
     public boolean deleteTeacher(Long teacher_id) {
@@ -65,17 +72,5 @@ public class TeacherService {
             return true;
         }
         return false;
-    }
-    @Transactional
-    public void assignCourse(Long teacherId, Long courseId) {
-        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(()->
-                new IllegalStateException("Teacher with id "+ teacherId + " not found"));
-        Course course = courseRepository.findById(courseId).orElseThrow(()->
-                new IllegalStateException("Course with id " + courseId + " not found"));
-        if (teacher.getCourses().contains(courseId)) {
-            throw new IllegalStateException("Teacher with id " + teacherId + " is already Assign with id " + courseId);
-        }
-        teacher.setCourse(course);
-        teacherRepository.save(teacher);
     }
 }

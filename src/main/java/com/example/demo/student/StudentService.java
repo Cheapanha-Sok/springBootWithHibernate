@@ -25,21 +25,30 @@ public class StudentService {
     public List<Student> getAllStudent() {
         return studentRepository.findAll();
     }
-    public Optional<Student> getStudent(Long studentId){
+
+    public Optional<Student> getStudent(Long studentId) {
         return studentRepository.findById(studentId);
     }
-    public void addNewStudent(Student student) {
-        studentRepository.save(student);
+
+    public boolean addNewStudent(Student student, Long departmentId) {
+        Optional<Department> department = departmentRepository.findById(departmentId);
+        if (department.isPresent()){
+            student.setDepartments(List.of(department.get()));
+            studentRepository.save(student);
+            return true;
+        }
+        return false;
     }
 
     public boolean deleteStudent(Long studentId) {
         boolean isExist = studentRepository.existsById(studentId);
-        if (isExist){
+        if (isExist) {
             studentRepository.deleteById(studentId);
             return true;
         }
         return false;
     }
+
     @Transactional
     public boolean updateStudent(Long studentId, Student updateStudent) {
         Optional<Student> studentOptional = studentRepository.findById(studentId);
@@ -74,7 +83,7 @@ public class StudentService {
             if (updateStudent.getDegree() != null && !updateStudent.getDegree().isEmpty()) {
                 existingStudent.setDegree(updateStudent.getDegree());
             }
-            if (updateStudent.getGeneration() != null){
+            if (updateStudent.getGeneration() != null) {
                 existingStudent.setGeneration(updateStudent.getGeneration());
             }
 
@@ -82,23 +91,6 @@ public class StudentService {
             return true;
         }
         return false;
-    }
-
-    @Transactional
-    public void enrolledStudent(Long studentId, Long departmentId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalStateException("Student with id " + studentId + " not found"));
-
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new IllegalStateException("Department with id " + departmentId + " not found"));
-
-        // Check if the student is already enrolled in the department
-        if (student.getDepartments().contains(department)) {
-            throw new IllegalStateException("Student with id " + studentId + " is already enrolled in Department with id " + departmentId);
-        }
-
-        student.setDepartment(department);
-        studentRepository.save(student);
     }
 
 }

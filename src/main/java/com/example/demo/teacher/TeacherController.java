@@ -38,13 +38,19 @@ public class TeacherController {
             return new ResponseEntity<>(map , HttpStatus.NOT_FOUND);
         }
     }
-    @PostMapping
-    public ResponseEntity<?> createTeacher(@RequestBody Teacher teacher){
+    @PostMapping({"course_id"})
+    public ResponseEntity<?> createTeacher(@RequestBody Teacher teacher , @PathVariable("course_id") Long courseId){
         Map<String , Object> map= new LinkedHashMap<String , Object>();
-        teacherService.createTeacher(teacher);
-        map.put("status", 1);
-        map.put("message", "Teacher is Saved Successfully");
-        return new ResponseEntity<>(map, HttpStatus.CREATED);
+        boolean isCreated = teacherService.createTeacher(teacher , courseId);
+        if (isCreated) {
+            map.put("status", 1);
+            map.put("message", "Course is Saved Successfully");
+            return new ResponseEntity<>(map, HttpStatus.CREATED);
+        } else {
+            map.put("status", 0);
+            map.put("message", "Course with id " + courseId + " not found");
+            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+        }
     }
     @DeleteMapping(path = "{teacher_id}")
     public ResponseEntity<?> deleteTeacher(@PathVariable Long teacher_id){
@@ -76,10 +82,5 @@ public class TeacherController {
             return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
         }
 
-    }
-    @PutMapping(path = "{teacher_id}/{course_id}")
-    public void assignCourse(@PathVariable ("teacher_id") Long teacherId ,
-                             @PathVariable ("course_id") Long courseId){
-        teacherService.assignCourse(teacherId,courseId);
     }
 }

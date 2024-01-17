@@ -28,7 +28,6 @@ public class CourseService {
     public void createCourse(Course course) {
         courseRepository.save(course);
     }
-    @NonNull
     public boolean deleteCourse(Long courseId) {
         boolean isExist = courseRepository.existsById(courseId);
         if (isExist) {
