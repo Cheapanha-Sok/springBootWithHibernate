@@ -1,5 +1,6 @@
 package com.example.demo.course;
 
+import com.example.demo.department.Department;
 import com.example.demo.teacher.Teacher;
 import jakarta.persistence.*;
 
@@ -74,6 +75,19 @@ public class Course {
     )
     private List<Teacher> teachers;
 
+    public List<Department> getDepartments() {
+        return departments;
+    }
+
+    @ManyToMany
+    @JoinTable(name = "courseDepartment",
+    joinColumns = @JoinColumn(name = "course_id") ,
+    inverseJoinColumns = @JoinColumn(name = "department_id"))
+    private List<Department> departments;
+
+    public void setDepartments(List<Department> departments){
+        this.departments= departments;
+    }
     @Override
     public String toString() {
         return "Course{" +

@@ -1,9 +1,9 @@
 package com.example.demo.course;
 
+import com.example.demo.department.Department;
+import com.example.demo.department.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import io.micrometer.common.lang.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,10 +11,12 @@ import java.util.Optional;
 @Service
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Autowired
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, DepartmentRepository departmentRepository) {
         this.courseRepository = courseRepository;
+        this.departmentRepository = departmentRepository;
     }
 
     public List<Course> getAllCourse() {
@@ -25,8 +27,15 @@ public class CourseService {
         return courseRepository.findById(course_id);
     }
 
-    public void createCourse(Course course) {
-        courseRepository.save(course);
+    public boolean createCourse(Course course , Long departmentId) {
+        Optional<Department> department = departmentRepository.findById(departmentId);
+        if (department.isPresent()){
+            course.setDepartments(List.of(department.get()));
+            courseRepository.save(course);
+            return true;
+        }
+        return false;
+
     }
     public boolean deleteCourse(Long courseId) {
         boolean isExist = courseRepository.existsById(courseId);

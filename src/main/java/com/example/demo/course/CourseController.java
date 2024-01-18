@@ -48,13 +48,20 @@ public class CourseController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> createCourse(@RequestBody Course course) {
+    @PostMapping(path = "{department_id}")
+    public ResponseEntity<?> createCourse(@RequestBody Course course , @PathVariable("department_id")Long departmentId) {
         Map<String, Object> map = new LinkedHashMap<String, Object>();
-        courseService.createCourse(course);
-        map.put("status", 1);
-        map.put("message", "Course is Saved Successfully");
-        return new ResponseEntity<>(map, HttpStatus.CREATED);
+        boolean isCreated = courseService.createCourse(course , departmentId);
+        if (isCreated){
+            map.put("status", 1);
+            map.put("message", "Course is Saved Successfully");
+            return new ResponseEntity<>(map, HttpStatus.CREATED);
+        } else {
+        map.put("status", 0);
+        map.put("message", "department with id " + departmentId + " not found");
+        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+    }
+
     }
 
     @DeleteMapping(path = "{course_id}")

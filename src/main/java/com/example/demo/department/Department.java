@@ -1,5 +1,6 @@
 package com.example.demo.department;
 
+import com.example.demo.course.Course;
 import com.example.demo.faculty.Faculty;
 import com.example.demo.student.Student;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -77,6 +78,8 @@ public class Department {
     @ManyToMany(mappedBy = "departments")
     private List<Student> students;
 
+    @ManyToMany(mappedBy = "departments")
+    private List<Course> courses;
 
     @Override
     public String toString(){
