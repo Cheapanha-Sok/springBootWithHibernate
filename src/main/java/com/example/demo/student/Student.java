@@ -144,27 +144,26 @@ public class Student {
     @JoinTable(
             name = "student_enrolled",
             joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "department_id")
+            inverseJoinColumns = @JoinColumn(name = "department_id"
+            )
     )
     private List<Department> departments;
 
     @Override
     public String toString(){
         return "Students{"+
-                " Student Id=" + studentId+
-                ", Student Name" + studentName+ '\''+
-                ", Gender=" + gender+'\''+
-                ", Age=" + age+'\''+
-                ", Date of birth=" + dob+'\''+
-                ", Phone Number" + phoneNumber+
-                ", Address" + address+'\''+
-                ", Student Year" + studentYear+
-                ", Generation" + generation+
-                ", Degree" + degree+
-                ", Department Id" + departments+
+                " studentId=" + studentId+
+                ", studentName" + studentName+ '\''+
+                ", gender=" + gender+'\''+
+                ", age=" + age+'\''+
+                ", dateOfBirth=" + dob+'\''+
+                ", phoneNumber" + phoneNumber+
+                ", address" + address+'\''+
+                ", studentYear" + studentYear+
+                ", generation" + generation+
+                ", degree" + degree+
                 '}';
     }
-
     public List<Department> getDepartments() {
         return departments;
     }

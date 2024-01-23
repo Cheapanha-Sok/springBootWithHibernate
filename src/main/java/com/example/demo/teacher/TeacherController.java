@@ -1,14 +1,10 @@
 package com.example.demo.teacher;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -21,65 +17,45 @@ public class TeacherController {
         this.teacherService = teacherService;
     }
     @GetMapping
-    public List<Teacher> getAllTeacher(){
-        return teacherService.getAllTeacher();
+    public ResponseEntity<Iterable<Teacher>>getAllTeacher(){
+        return ResponseEntity.ok(teacherService.getAllTeacher());
     }
     @GetMapping(path = "{teacher_id}")
     public ResponseEntity<?> getTeacher(@PathVariable("teacher_id") Long teacherId){
-        Map<String , Object> map= new LinkedHashMap<String , Object>();
         Optional<Teacher> teacher = teacherService.getTeacher(teacherId);
         if (teacher.isPresent()){
-            map.put("status" , 1);
-            map.put("Teacher" , teacher);
-            return new ResponseEntity<>(map , HttpStatus.OK);
+            return ResponseEntity.ok(teacher.get());
         }else{
-            map.put("status" , 0);
-            map.put("message" , "Teacher with id" + teacherId + "not founded") ;
-            return new ResponseEntity<>(map , HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
-    @PostMapping({"course_id"})
+    @PostMapping("{course_id}")
     public ResponseEntity<?> createTeacher(@RequestBody Teacher teacher , @PathVariable("course_id") Long courseId){
-        Map<String , Object> map= new LinkedHashMap<String , Object>();
         boolean isCreated = teacherService.createTeacher(teacher , courseId);
         if (isCreated) {
-            map.put("status", 1);
-            map.put("message", "Course is Saved Successfully");
-            return new ResponseEntity<>(map, HttpStatus.CREATED);
+            return ResponseEntity.created(URI.create("/api/v1/teacher/" + teacher.getTeacherId())).build();
         } else {
-            map.put("status", 0);
-            map.put("message", "Course with id " + courseId + " not found");
-            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
     @DeleteMapping(path = "{teacher_id}")
     public ResponseEntity<?> deleteTeacher(@PathVariable Long teacher_id){
-        Map<String , Object> map= new LinkedHashMap<String , Object>();
         boolean isDeleted = teacherService.deleteTeacher(teacher_id);
         if (isDeleted) {
-            map.put("status", 1);
-            map.put("message", "Record is deleted successfully!");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            return ResponseEntity.noContent().build();
         } else {
-            map.put("status", 0);
-            map.put("message", "Teacher with id " + teacher_id + " not found");
-            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
     @PutMapping(path = "{teacher_id}")
     public ResponseEntity<?> updateTeacher(
             @PathVariable ("teacher_id")Long teacherId,
             @RequestBody Teacher teacher){
-        Map<String , Object> map= new LinkedHashMap<String , Object>();
         boolean isUpdated = teacherService.updateTeacher(teacherId , teacher);
         if (isUpdated) {
-            map.put("status", 1);
-            map.put("message", "Record is updated successfully!");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } else {
-            map.put("status", 0);
-            map.put("message", "Teacher with id " + teacherId + " not found");
-            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
 
     }

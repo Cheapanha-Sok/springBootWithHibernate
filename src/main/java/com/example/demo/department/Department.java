@@ -70,8 +70,8 @@ public class Department {
     public void setOfficeNumber(Integer officeNumber) {
         this.officeNumber = officeNumber;
     }
-    @JsonProperty("faculty")
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id" , referencedColumnName = "faculty_id")
     private Faculty faculty;
 
@@ -84,11 +84,10 @@ public class Department {
     @Override
     public String toString(){
         return "Departments{"+
-                " Department Id=" + departmentId+
-                ", Department Name" + departmentName+ '\''+
-                ", Head Name=" + headName+'\''+
-                ", Office Number" + officeNumber+
-                ", Faculty Id" + faculty+
+                " DepartmentId=" + departmentId+
+                ", DepartmentName" + departmentName+ '\''+
+                ", HeadName=" + headName+'\''+
+                ", OfficeNumber" + officeNumber+
                 '}';
     }
 }

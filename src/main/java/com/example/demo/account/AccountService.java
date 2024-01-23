@@ -40,7 +40,7 @@ public class AccountService {
         return false;
     }
 
-    public List<Account> getAllAccount() {
+    public Iterable<Account> getAllAccount() {
         return accountRepository.findAll();
     }
 }

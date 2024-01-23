@@ -19,7 +19,7 @@ public class CourseService {
         this.departmentRepository = departmentRepository;
     }
 
-    public List<Course> getAllCourse() {
+    public Iterable<Course> getAllCourse() {
         return courseRepository.findAll();
     }
 
@@ -35,7 +35,6 @@ public class CourseService {
             return true;
         }
         return false;
-
     }
     public boolean deleteCourse(Long courseId) {
         boolean isExist = courseRepository.existsById(courseId);

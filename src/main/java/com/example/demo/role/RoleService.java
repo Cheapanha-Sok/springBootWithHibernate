@@ -16,7 +16,7 @@ public class RoleService {
     public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-    public List<Role> getAllRole(){
+    public Iterable<Role> getAllRole(){
         return roleRepository.findAll();
     }
     public Optional<Role> getRole(Long roleId){

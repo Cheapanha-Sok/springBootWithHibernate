@@ -21,6 +21,7 @@ public class TeacherService {
         this.courseRepository = courseRepository;
     }
     public List<Teacher> getAllTeacher() {
+
         return teacherRepository.findAll() ;
     }
     public Optional<Teacher> getTeacher(Long teacherId){
@@ -28,6 +29,7 @@ public class TeacherService {
     }
     @Transactional
     public boolean createTeacher(Teacher teacher , Long courseId) {
+
         Optional<Course> course = courseRepository.findById(courseId);
         if (course.isPresent()){
             teacher.setCourses(List.of(course.get()));

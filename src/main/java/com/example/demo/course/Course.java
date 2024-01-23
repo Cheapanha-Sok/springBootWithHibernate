@@ -3,11 +3,13 @@ package com.example.demo.course;
 import com.example.demo.department.Department;
 import com.example.demo.teacher.Teacher;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "Courses")
+@AllArgsConstructor
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -91,10 +93,10 @@ public class Course {
     @Override
     public String toString() {
         return "Course{" +
-                " Course Id=" + courseId +
-                ", Course Name" + courseName + '\'' +
-                ", Course Credit=" + credit + '\'' +
-                ", Office type" + type +
+                " courseId=" + courseId +
+                ", courseName=" + courseName + '\'' +
+                ", courseCredit=" + credit + '\'' +
+                ", type=" + type +
                 '}';
     }
 }

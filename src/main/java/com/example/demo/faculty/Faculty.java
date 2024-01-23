@@ -2,7 +2,7 @@ package com.example.demo.faculty;
 
 import com.example.demo.department.Department;
 import jakarta.persistence.*;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 @Entity
@@ -68,11 +68,11 @@ public class Faculty {
     }
     @Override
     public String toString(){
-        return "Faculty{"+
-                " Faculty Id=" + facultyId+
-                ", Faculty Name" + facultyName+ '\''+
-                ", Dean Name=" + deanName+'\''+
-                ", Office Number" + officeNumber+
+        return "faculty{"+
+                " facultyId=" + facultyId+
+                ", facultyName=" + facultyName+ '\''+
+                ", deanName=" + deanName+'\''+
+                ", officeNumber=" + officeNumber+
                 '}';
     }
 

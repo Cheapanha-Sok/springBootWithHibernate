@@ -22,7 +22,7 @@ public class StudentService {
         this.departmentRepository = departmentRepository;
     }
 
-    public List<Student> getAllStudent() {
+    public Iterable<Student> getAllStudent() {
         return studentRepository.findAll();
     }
 

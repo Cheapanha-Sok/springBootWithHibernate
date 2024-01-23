@@ -11,15 +11,7 @@ public class FacultyConfig {
     @Bean
     CommandLineRunner facultyCommandLineRunner(FacultyRepository repository){
         return args ->{
-//            Faculty engineering = new Faculty(
-//                    "Faculty of Engineering",
-//                    "Srun sovilla",
-//                    1
-//
-//            );
-//            repository.saveAll(
-//                    List.of()
-//            );
+
         };
 
     }

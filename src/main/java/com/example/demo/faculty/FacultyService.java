@@ -1,6 +1,5 @@
 package com.example.demo.faculty;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +21,11 @@ public class FacultyService {
     public Optional<Faculty> getFaculty(Long facultyId){
         return facultyRepository.findById(facultyId);
     }
-    @Transactional
+
     public void createFaculty(Faculty faculty) {
         facultyRepository.save(faculty);
     }
-    @Transactional
+
     public boolean deleteFaculty(Long facultyId) {
         boolean isExist = facultyRepository.existsById(facultyId);
         if (isExist){
@@ -35,7 +34,7 @@ public class FacultyService {
         }
         return false;
     }
-    @Transactional
+
     public boolean updateFaculty(Long facultyId, Faculty updateFaculty ) {
         Optional<Faculty> optionalFaculty = facultyRepository.findById(facultyId);
         if (optionalFaculty.isPresent()) {
