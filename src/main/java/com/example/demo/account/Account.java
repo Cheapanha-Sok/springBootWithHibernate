@@ -1,17 +1,18 @@
 package com.example.demo.account;
 
-import com.example.demo.course.Course;
 import com.example.demo.role.Role;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+
 
 @Entity
-@Table(name = "Account" , uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(name = "Account" , uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 
-public class Account {
+public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id",nullable = false)
@@ -48,33 +49,22 @@ public class Account {
         this.accountId = accountId;
     }
 
-    public String getUserName() {
-        return userName;
-    }
 
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public String getPassword() {
-        return password;
-    }
+
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
-    }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public List<Role> getRoles() {
-        return roles;
-    }
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
@@ -85,6 +75,39 @@ public class Account {
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns =@JoinColumn (name = "role_id"))
     private List<Role> roles;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return userName;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
     @Override
     public String toString() {

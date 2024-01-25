@@ -2,22 +2,28 @@ package com.example.demo.role;
 
 import com.example.demo.account.Account;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
 @Entity
 @Table(name = "Role")
-public class Role {
+public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
     private Long roleId;
-    @Column(name = "role_name")
-    private String roleName;
+    private String authority;
 
     public Role(){
 
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
     public Long getRoleId() {
         return roleId;
     }
@@ -27,28 +33,27 @@ public class Role {
     }
 
     public String getRoleName() {
-        return roleName;
+        return authority;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setRoleName(String authority) {
+        this.authority = authority;
     }
 
-    public Role(Long roleId , String roleName){
+    public Role(Long roleId , String authority){
         this.roleId=roleId;
-        this.roleName=roleName;
-    }
-    public Role(String roleName){
-        this.roleName = roleName;
+        this.authority=authority;
     }
     @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
     private List<Account> accounts;
+
+
     @Override
-    public String toString() {
-        return "Roles {" +
-                " Role Id=" + roleId +
-                " ,Role Name =" + roleName+
-                '}';
+    public String getAuthority() {
+        return authority;
     }
 
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
 }

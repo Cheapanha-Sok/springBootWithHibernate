@@ -1,0 +1,32 @@
+package com.example.demo.auth;
+
+import com.example.demo.account.AccountRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Service;
+
+@Service
+@Transactional
+public class AuthenticationService {
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private TokenService tokenService;
+    public LoginResponseDTO loginUser(String email, String password){
+        try{
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+            String token = tokenService.generateJwt(auth);
+            return new LoginResponseDTO(accountRepository.findByEmail(email).get(), token);
+        } catch(AuthenticationException e){
+            return new LoginResponseDTO(null, "");
+        }
+    }
+}

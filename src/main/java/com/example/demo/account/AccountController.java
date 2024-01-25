@@ -9,7 +9,6 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "api/v1/account/")
-
 public class AccountController {
     private final AccountService accountService;
     @Autowired
