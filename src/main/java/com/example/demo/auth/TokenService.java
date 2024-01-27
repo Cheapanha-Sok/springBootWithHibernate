@@ -14,10 +14,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
-    @Autowired
-    private JwtEncoder jwtEncoder;
-    @Autowired
+
+    private final JwtEncoder jwtEncoder;
     private JwtDecoder jwtDecoder;
+
+    public TokenService(JwtEncoder jwtEncoder , JwtDecoder jwtDecoder) {
+        this.jwtEncoder = jwtEncoder;
+        this.jwtDecoder = jwtDecoder;
+    }
 
     public String generateJwt(Authentication authentication){
         Instant now = Instant.now();
@@ -27,7 +31,7 @@ public class TokenService {
                 .collect(Collectors.joining(" "));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
+                .issuer("authSpringBoot")
                 .issuedAt(now)
                 .subject(authentication.getName())
                 .claim("roles", scope)

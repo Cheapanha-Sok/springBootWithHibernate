@@ -9,6 +9,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -32,10 +33,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
     private final RSAKeyProperties key;
 
-    public SecurityConfiguration(RSAKeyProperties key) {
+    SecurityConfiguration(RSAKeyProperties key) {
         this.key = key;
     }
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -43,7 +43,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth ->
                 {
                     auth.requestMatchers("/auth/**").permitAll();
-                    auth.requestMatchers("/api/v1/**").hasRole("USER");
+                    auth.requestMatchers(HttpMethod.GET,"/api/v1/**").hasAnyRole("USER" , "ADMIN");
+                    auth.requestMatchers(HttpMethod.POST,"/api/v1/**").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.DELETE,"/api/v1/**").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.PUT,"/api/v1/**").hasRole("ADMIN");
                     auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2

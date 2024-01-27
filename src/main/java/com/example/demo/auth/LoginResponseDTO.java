@@ -4,14 +4,14 @@ import com.example.demo.account.Account;
 
 public class LoginResponseDTO {
     private Account account;
-    private String jwt;
+    private String accessToken;
 
     public LoginResponseDTO(){
 
     }
-    public LoginResponseDTO(Account account , String jwt){
+     LoginResponseDTO(Account account , String accessToken){
         this.account= account;
-        this.jwt = jwt;
+        this.accessToken = accessToken;
     }
     public Account getAccount(){
         return account;
@@ -20,10 +20,10 @@ public class LoginResponseDTO {
     public void setAccount(Account account) {
         this.account = account;
     }
-    public String getJwt(){
-        return jwt;
+    public String getAccessToken(){
+        return accessToken;
     }
-    public void setJwt(String jwt){
-        this.jwt = jwt;
+    public void setAccessToken(String jwt){
+        this.accessToken = accessToken;
     }
 }

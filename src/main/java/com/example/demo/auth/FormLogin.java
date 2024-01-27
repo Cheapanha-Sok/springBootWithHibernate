@@ -1,6 +1,9 @@
 package com.example.demo.auth;
 
+import jakarta.validation.constraints.Email;
+
 public class FormLogin {
+    @Email
     private String email;
     private String password;
 

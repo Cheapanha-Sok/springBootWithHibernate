@@ -9,7 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "Courses")
-@AllArgsConstructor
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

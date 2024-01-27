@@ -8,7 +8,6 @@ import java.util.*;
 
 @RestController
 @RequestMapping(path = "api/v1/course/")
-
 public class CourseController {
     private final CourseService courseService;
 

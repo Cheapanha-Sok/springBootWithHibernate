@@ -1,16 +1,19 @@
 package com.example.demo.auth;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin("*")
 public class AuthenticationController {
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
+    AuthenticationController(AuthenticationService authenticationService){
+        this.authenticationService = authenticationService;
+    }
     @PostMapping("/login")
-    public LoginResponseDTO loginUser(@RequestBody FormLogin body) {
+    public ResponseEntity<?> loginUser(@RequestBody @Valid  FormLogin body) {
         return authenticationService.loginUser(body.getEmail(), body.getPassword());
     }
 }

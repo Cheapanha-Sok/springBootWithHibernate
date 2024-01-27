@@ -10,18 +10,18 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "Account" , uniqueConstraints = @UniqueConstraint(columnNames = "username"))
+@Table(name = "Account" , uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id",nullable = false)
     private Long accountId;
-    @Column(name = "username",nullable = false)
+    @Column(name = "username",nullable = false , length = 20)
     private String userName;
-    @Column(name = "email")
+    @Column(name = "email" , nullable = false , length = 50)
     private String email;
-    @Column(name = "password",nullable = false)
+    @Column(name = "password",nullable = false , length = 60)
     private String password;
 
     public Account(){
