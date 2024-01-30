@@ -9,14 +9,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-
 @Service
 @Transactional
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    AuthenticationService( AuthenticationManager authenticationManager , TokenService tokenService){
+     AuthenticationService( AuthenticationManager authenticationManager , TokenService tokenService){
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
     }

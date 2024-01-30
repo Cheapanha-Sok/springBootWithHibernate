@@ -1,5 +1,5 @@
 package com.example.demo.student;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
@@ -10,52 +10,31 @@ import java.util.Optional;
 public class StudentController {
     private final StudentService studentService;
 
-    @Autowired
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
     @GetMapping
     public ResponseEntity<Iterable<Student>> getAllStudent() {
-        return ResponseEntity.ok(studentService.getAllStudent());
+        return studentService.getAllStudent();
     }
     @GetMapping(path = "{student_id}")
-    public ResponseEntity<?> getStudent(@PathVariable("student_id") Long studentId) {
-        Optional<Student> student = studentService.getStudent(studentId);
-        if (student.isPresent()){
-            return ResponseEntity.ok(student.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Optional<Student>> getStudent(@PathVariable("student_id") Long studentId) {
+        return studentService.getStudent(studentId);
     }
     @PostMapping("{department_id}")
-    public ResponseEntity<?> registerNewStudent(@RequestBody Student student , @PathVariable("department_id")Long departmentId) {
-        boolean isCreated = studentService.addNewStudent(student , departmentId);
-        if (isCreated) {
-            return ResponseEntity.created(URI.create("/api/v1/student/" + student.getStudentId())).build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<URI> registerNewStudent(@RequestBody Student student , @PathVariable("department_id")Long departmentId) {
+        return studentService.addNewStudent(student , departmentId);
     }
     @DeleteMapping(path = "{student_id}")
-    public ResponseEntity<?> deleteStudent(@PathVariable("student_id") Long studentId) {
-        boolean isDeleted = studentService.deleteStudent(studentId);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<HttpStatus> deleteStudent(@PathVariable("student_id") Long studentId) {
+        return studentService.deleteStudent(studentId);
     }
     @PutMapping(path = "{student_id}")
-    public ResponseEntity<?> updateStudent(
+    public ResponseEntity<Student> updateStudent(
             @PathVariable("student_id") Long studentId,
             @RequestBody Student student
     ) {
-        boolean isUpdated = studentService.updateStudent(studentId , student);
-        if (isUpdated) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return studentService.updateStudent(studentId , student);
     }
 }

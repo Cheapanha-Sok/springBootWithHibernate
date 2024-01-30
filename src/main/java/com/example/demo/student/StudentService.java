@@ -1,56 +1,60 @@
 package com.example.demo.student;
 
-import com.example.demo.course.Course;
+import com.example.demo.customsException.NotFoundHandler;
 import com.example.demo.department.Department;
 import com.example.demo.department.DepartmentRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class StudentService {
     private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
 
-    @Autowired
     public StudentService(StudentRepository studentRepository, DepartmentRepository departmentRepository) {
         this.studentRepository = studentRepository;
         this.departmentRepository = departmentRepository;
     }
 
-    public Iterable<Student> getAllStudent() {
-        return studentRepository.findAll();
+    public ResponseEntity<Iterable<Student>> getAllStudent() {
+        return ResponseEntity.ok(studentRepository.findAll());
     }
 
-    public Optional<Student> getStudent(Long studentId) {
-        return studentRepository.findById(studentId);
+    public ResponseEntity<Optional<Student> >getStudent(Long studentId) {
+        Optional<Student> student = studentRepository.findById(studentId);
+        if (student.isPresent()){
+            return ResponseEntity.ok(student);
+        }
+        throw new NotFoundHandler("Student with id=" + studentId + " not found");
     }
 
-    public boolean addNewStudent(Student student, Long departmentId) {
+    public ResponseEntity<URI> addNewStudent(Student student, Long departmentId) {
         Optional<Department> department = departmentRepository.findById(departmentId);
         if (department.isPresent()){
             student.setDepartments(List.of(department.get()));
             studentRepository.save(student);
-            return true;
+            return ResponseEntity.created(URI.create("/api/v1/student/" + student.getStudentId())).build();
         }
-        return false;
+        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
     }
 
-    public boolean deleteStudent(Long studentId) {
+    public ResponseEntity<HttpStatus> deleteStudent(Long studentId) {
         boolean isExist = studentRepository.existsById(studentId);
         if (isExist) {
             studentRepository.deleteById(studentId);
-            return true;
+            return ResponseEntity.noContent().build();
         }
-        return false;
+        throw new NotFoundHandler("Student with id=" + studentId + " not found");
     }
 
-    @Transactional
-    public boolean updateStudent(Long studentId, Student updateStudent) {
+    public ResponseEntity<Student> updateStudent(Long studentId, Student updateStudent) {
         Optional<Student> studentOptional = studentRepository.findById(studentId);
 
         if (studentOptional.isPresent()) {
@@ -88,9 +92,9 @@ public class StudentService {
             }
 
             studentRepository.save(existingStudent);
-            return true;
+            return ResponseEntity.ok(existingStudent);
         }
-        return false;
+        throw new NotFoundHandler("Student with id=" + studentId + " not found");
     }
 
 }

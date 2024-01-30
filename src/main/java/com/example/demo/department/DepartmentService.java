@@ -1,58 +1,60 @@
 package com.example.demo.department;
 
+import com.example.demo.customsException.NotFoundHandler;
 import com.example.demo.faculty.Faculty;
 import com.example.demo.faculty.FacultyRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.net.URI;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final FacultyRepository facultyRepository;
-
     @Autowired
     public DepartmentService(DepartmentRepository departmentRepository, FacultyRepository facultyRepository) {
         this.departmentRepository = departmentRepository;
         this.facultyRepository = facultyRepository;
     }
 
-    public List<Department> getAllDepartment() {
-        return departmentRepository.findAll();
+    public ResponseEntity<Iterable<Department>> getAllDepartment() {
+       return ResponseEntity.ok(departmentRepository.findAll());
     }
-    public Optional<Department> getDepartment(Long departmentId){
-        return departmentRepository.findById(departmentId);
+    public ResponseEntity<Department> getDepartment(Long departmentId){
+        Optional<Department> department = departmentRepository.findById(departmentId);
+        if (department.isPresent()){
+            return ResponseEntity.ok(department.get());
+        }
+        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
     }
 
-    @Transactional
-    public boolean addNewDepartment(Department department, Long facultyId) {
+    public ResponseEntity<URI> addNewDepartment(Department department, Long facultyId) {
         Optional<Faculty> faculty = facultyRepository.findById(facultyId);
         if (faculty.isPresent()){
             department.setFaculty(faculty.get());
             departmentRepository.save(department);
-            return true;
+            return ResponseEntity.created(URI.create("/api/v1/department/" + department.getDepartmentId())).build();
         }
-        return false;
+        throw new NotFoundHandler("Faculty with id=" + facultyId + " not found");
     }
 
-    @Transactional
-    public boolean deleteDepartment(Long departmentId) {
+    public ResponseEntity<HttpStatus> deleteDepartment(Long departmentId) {
         boolean isExist = departmentRepository.existsById(departmentId);
         if (isExist) {
             departmentRepository.deleteById(departmentId);
-            return true;
-        }else{
-            return false;
+            return ResponseEntity.noContent().build();
         }
-
+        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
     }
 
-    @Transactional
-    public boolean updateDepartment(Long departmentId, Department updatedepartment) {
+    public ResponseEntity<Department> updateDepartment(Long departmentId, Department updatedepartment) {
         Optional<Department> department = departmentRepository.findById(departmentId);
         if (department.isPresent()) {
             Department existingDepartment = department.get();
@@ -66,8 +68,8 @@ public class DepartmentService {
                 existingDepartment.setOfficeNumber(updatedepartment.getOfficeNumber());
             }
             departmentRepository.save(existingDepartment);
-            return true;
+            return ResponseEntity.ok(existingDepartment);
         }
-        return false;
+        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
     }
 }

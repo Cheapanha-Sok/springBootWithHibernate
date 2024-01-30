@@ -1,6 +1,7 @@
 package com.example.demo.role;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,47 +12,31 @@ import java.util.Optional;
 @RequestMapping(path = "/api/v1/role/")
 public class RoleController {
     private final RoleService roleService;
-    @Autowired
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }
     @GetMapping
     public ResponseEntity<Iterable<Role>> getAllRole() {
-        return ResponseEntity.ok(roleService.getAllRole());
+        return roleService.getAllRole();
     }
     @GetMapping("{role_id}")
-    public ResponseEntity<?> getCourse(@PathVariable("role_id") Long roleId) {
-        Optional<Role> role = roleService.getRole(roleId);
-        if (role.isPresent()) {
-            return ResponseEntity.ok(role.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Optional<Role>> getRole(@PathVariable("role_id") Long roleId) {
+        return roleService.getRole(roleId);
     }
     @PostMapping
-    public ResponseEntity<?> createRole(@RequestBody Role role){
-        roleService.createRole(role);
-        return ResponseEntity.created(URI.create("/api/v1/role/" + role.getRoleId())).build();
+    public ResponseEntity<URI> createRole(@RequestBody Role role){
+        return roleService.createRole(role);
+
     }
     @DeleteMapping(path = "{role_id}")
-    public ResponseEntity<?> deleteRole(@PathVariable("role_id")Long roleId) {
-        boolean isDelete = roleService.deleteRole(roleId);
-        if (isDelete) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<HttpStatus> deleteRole(@PathVariable("role_id")Long roleId) {
+        return roleService.deleteRole(roleId);
     }
     @PutMapping(path = "{role_id}")
-    public ResponseEntity<?> updateRole(
+    public ResponseEntity<Role> updateRole(
             @PathVariable("role_id") Long role_id,
             @RequestBody Role updatedRole
     ) {
-        boolean isUpdated = roleService.updateRole(role_id, updatedRole);
-        if (isUpdated) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return roleService.updateRole(role_id , updatedRole);
     }
 }

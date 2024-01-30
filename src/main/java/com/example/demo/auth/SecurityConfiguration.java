@@ -32,10 +32,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
     private final RSAKeyProperties key;
+    private final UserService userService;
 
-    SecurityConfiguration(RSAKeyProperties key) {
+    public SecurityConfiguration(RSAKeyProperties key , UserService userService) {
         this.key = key;
+        this.userService = userService;
     }
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

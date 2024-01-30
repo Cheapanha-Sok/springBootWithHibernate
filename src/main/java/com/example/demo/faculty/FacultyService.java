@@ -1,8 +1,12 @@
 package com.example.demo.faculty;
 
+import com.example.demo.customsException.NotFoundHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,27 +19,32 @@ public class FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
-    public List<Faculty> getAllFaculty() {
-        return facultyRepository.findAll();
+    public ResponseEntity<Iterable<Faculty>> getAllFaculty() {
+       return ResponseEntity.ok(facultyRepository.findAll());
     }
-    public Optional<Faculty> getFaculty(Long facultyId){
-        return facultyRepository.findById(facultyId);
+    public ResponseEntity<Optional<Faculty>> getFaculty(Long facultyId){
+        Optional<Faculty> faculty = facultyRepository.findById(facultyId);
+        if (faculty.isPresent()){
+            return ResponseEntity.ok(faculty);
+        }
+        throw new NotFoundHandler("Faculty with id=" + facultyId + "not found");
     }
 
-    public void createFaculty(Faculty faculty) {
+    public ResponseEntity<URI> createFaculty(Faculty faculty) {
         facultyRepository.save(faculty);
+        return ResponseEntity.created(URI.create("/api/v1/faculty/" + faculty.getFacultyId())).build();
     }
 
-    public boolean deleteFaculty(Long facultyId) {
+    public ResponseEntity<HttpStatus> deleteFaculty(Long facultyId) {
         boolean isExist = facultyRepository.existsById(facultyId);
         if (isExist){
             facultyRepository.deleteById(facultyId);
-            return true;
+            return ResponseEntity.noContent().build();
         }
-        return false;
+        throw new NotFoundHandler("Faculty with id=" + facultyId + "not found");
     }
 
-    public boolean updateFaculty(Long facultyId, Faculty updateFaculty ) {
+    public ResponseEntity<HttpStatus> updateFaculty(Long facultyId, Faculty updateFaculty ) {
         Optional<Faculty> optionalFaculty = facultyRepository.findById(facultyId);
         if (optionalFaculty.isPresent()) {
             Faculty existingCourse = optionalFaculty.get();
@@ -49,8 +58,8 @@ public class FacultyService {
                 existingCourse.setOfficeNumber(updateFaculty.getOfficeNumber());
             }
             facultyRepository.save(existingCourse);
-            return true;
+            return ResponseEntity.ok().build();
         }
-        return false;
+        throw new NotFoundHandler("Faculty with id=" + facultyId + "not found");
     }
 }

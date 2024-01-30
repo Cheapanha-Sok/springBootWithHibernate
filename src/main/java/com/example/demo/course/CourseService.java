@@ -1,19 +1,22 @@
 package com.example.demo.course;
 
+import com.example.demo.customsException.NotFoundHandler;
 import com.example.demo.department.Department;
 import com.example.demo.department.DepartmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class CourseService {
     private final CourseRepository courseRepository;
     private final DepartmentRepository departmentRepository;
 
-    @Autowired
     public CourseService(CourseRepository courseRepository, DepartmentRepository departmentRepository) {
         this.courseRepository = courseRepository;
         this.departmentRepository = departmentRepository;
@@ -23,29 +26,34 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
-    public Optional<Course> getCourse(Long course_id) {
-        return courseRepository.findById(course_id);
+    public ResponseEntity<Course> getCourse(Long course_id) {
+        Optional<Course> course = courseRepository.findById(course_id);
+        if (course.isPresent()) {
+            return ResponseEntity.ok(course.get());
+        }
+        throw new NotFoundHandler("Course with id=" + course_id + " not found");
     }
 
-    public boolean createCourse(Course course , Long departmentId) {
+    public ResponseEntity<HttpStatus> createCourse(Course course, Long departmentId) {
         Optional<Department> department = departmentRepository.findById(departmentId);
-        if (department.isPresent()){
+        if (department.isPresent()) {
             course.setDepartments(List.of(department.get()));
             courseRepository.save(course);
-            return true;
+            return ResponseEntity.ok().build();
         }
-        return false;
+        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
     }
-    public boolean deleteCourse(Long courseId) {
+
+    public ResponseEntity<HttpStatus> removeCourse(Long courseId) {
         boolean isExist = courseRepository.existsById(courseId);
         if (isExist) {
             courseRepository.deleteById(courseId);
-            return true;
+            return ResponseEntity.noContent().build();
         }
-        return false;
+        throw new NotFoundHandler("Course with id=" + courseId + " not found");
     }
 
-    public boolean updateCourse(Long courseId, Course updatedCourse) {
+    public ResponseEntity<Course> updateCourse(Long courseId, Course updatedCourse) {
         Optional<Course> optionalCourse = courseRepository.findById(courseId);
         if (optionalCourse.isPresent()) {
             Course existingCourse = optionalCourse.get();
@@ -59,8 +67,8 @@ public class CourseService {
                 existingCourse.setType(updatedCourse.getType());
             }
             courseRepository.save(existingCourse);
-            return true;
+            return ResponseEntity.ok(existingCourse);
         }
-        return false;
+        throw new NotFoundHandler("Course with id=" + courseId + " not found");
     }
 }

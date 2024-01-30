@@ -2,56 +2,57 @@ package com.example.demo.teacher;
 
 import com.example.demo.course.Course;
 import com.example.demo.course.CourseRepository;
-import com.example.demo.student.Student;
+import com.example.demo.customsException.NotFoundHandler;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final CourseRepository courseRepository;
-    @Autowired
     public TeacherService(TeacherRepository teacherRepository, CourseRepository courseRepository) {
         this.teacherRepository = teacherRepository;
         this.courseRepository = courseRepository;
     }
-    public List<Teacher> getAllTeacher() {
-
-        return teacherRepository.findAll() ;
+    public ResponseEntity<Iterable<Teacher>> getAllTeacher() {
+        return ResponseEntity.ok(teacherRepository.findAll()) ;
     }
-    public Optional<Teacher> getTeacher(Long teacherId){
-        return teacherRepository.findById(teacherId);
+    public ResponseEntity<Optional<Teacher> >getTeacher(Long teacherId){
+        Optional<Teacher> teacher = teacherRepository.findById(teacherId);
+        if (teacher.isPresent()){
+            return ResponseEntity.ok(teacher);
+        }
+        throw new NotFoundHandler("Teacher with id" + teacherId + " not found");
     }
-    @Transactional
-    public boolean createTeacher(Teacher teacher , Long courseId) {
 
+    public ResponseEntity<URI> createTeacher(Teacher teacher , Long courseId) {
         Optional<Course> course = courseRepository.findById(courseId);
         if (course.isPresent()){
             teacher.setCourses(List.of(course.get()));
             teacherRepository.save(teacher);
-            return true;
+            return ResponseEntity.created(URI.create("/api/v1/teacher/" + teacher.getTeacherId())).build();
         }
-        return false;
+        throw new NotFoundHandler("Course with id" + courseId + " not found");
 
     }
-    @Transactional
-    public boolean deleteTeacher(Long teacher_id) {
+
+    public ResponseEntity<HttpStatus> deleteTeacher(Long teacher_id) {
         boolean isExist = teacherRepository.existsById(teacher_id);
         if (isExist){
             teacherRepository.deleteById(teacher_id);
-            return true;
-        }else{
-            return false;
+            return ResponseEntity.noContent().build();
         }
+        throw new NotFoundHandler("Teacher with id" + teacher_id + " not found");
 
     }
-    @Transactional
-    public boolean updateTeacher(Long teacherId, Teacher updateTeacher) {
+
+    public ResponseEntity<Teacher> updateTeacher(Long teacherId, Teacher updateTeacher) {
         Optional<Teacher> teacher = teacherRepository.findById(teacherId);
         if (teacher.isPresent()){
             Teacher existingTeacher = teacher.get();
@@ -71,8 +72,8 @@ public class TeacherService {
                 updateTeacher.setPhoneNumber(updateTeacher.getPhoneNumber());
             }
             teacherRepository.save(existingTeacher);
-            return true;
+            return ResponseEntity.ok(existingTeacher);
         }
-        return false;
+        throw new NotFoundHandler("Teacher with id" + teacherId + " not found");
     }
 }

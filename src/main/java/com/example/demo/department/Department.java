@@ -82,12 +82,15 @@ public class Department {
     private List<Course> courses;
 
     @Override
-    public String toString(){
-        return "Departments{"+
-                " DepartmentId=" + departmentId+
-                ", DepartmentName" + departmentName+ '\''+
-                ", HeadName=" + headName+'\''+
-                ", OfficeNumber" + officeNumber+
+    public String toString() {
+        return "Department{" +
+                "departmentId=" + departmentId +
+                ", departmentName='" + departmentName + '\'' +
+                ", headName='" + headName + '\'' +
+                ", officeNumber=" + officeNumber +
+                ", faculty=" + faculty +
+                ", students=" + students +
+                ", courses=" + courses +
                 '}';
     }
 }

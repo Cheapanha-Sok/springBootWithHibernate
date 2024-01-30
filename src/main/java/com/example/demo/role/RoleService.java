@@ -1,10 +1,13 @@
 package com.example.demo.role;
 
+import com.example.demo.customsException.NotFoundHandler;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.net.URI;
 import java.util.Optional;
 
 @Service
@@ -16,33 +19,39 @@ public class RoleService {
     public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-    public Iterable<Role> getAllRole(){
-        return roleRepository.findAll();
+    public ResponseEntity<Iterable<Role>> getAllRole(){
+        return ResponseEntity.ok(roleRepository.findAll());
     }
-    public Optional<Role> getRole(Long roleId){
-        return roleRepository.findById(roleId);
+    public ResponseEntity<Optional<Role> >getRole(Long roleId){
+        Optional<Role>role = roleRepository.findById(roleId);
+        if (role.isPresent()){
+            return ResponseEntity.ok(role);
+        }
+        throw new NotFoundHandler("Role with id=" + roleId + " not found");
+
     }
-    public void createRole(Role role) {
+    public ResponseEntity<URI> createRole(Role role) {
         roleRepository.save(role);
+        return ResponseEntity.created(URI.create("/api/v1/role/" + role.getRoleId())).build();
     }
-    public boolean deleteRole(Long roleId){
+    public ResponseEntity<HttpStatus> deleteRole(Long roleId){
         boolean isExist = roleRepository.existsById(roleId);
         if (isExist){
             roleRepository.deleteById(roleId);
-            return true;
+            return ResponseEntity.noContent().build();
         }
-        return false;
+        throw new NotFoundHandler("Role with id=" + roleId + " not found");
     }
-    public boolean updateRole(Long courseId, Role updatedRole) {
-        Optional<Role> roleOptional = roleRepository.findById(courseId);
+    public ResponseEntity<Role> updateRole(Long roleId, Role updatedRole) {
+        Optional<Role> roleOptional = roleRepository.findById(roleId);
         if (roleOptional.isPresent()) {
             Role existingRole = roleOptional.get();
             if (updatedRole.getRoleName() != null && !updatedRole.getRoleName().isEmpty()) {
                 existingRole.setRoleName(updatedRole.getRoleName());
             }
             roleRepository.save(existingRole);
-            return true;
+            return ResponseEntity.ok(existingRole);
         }
-        return false;
+        throw new NotFoundHandler("Role with id=" + roleId + " not found");
     }
 }
