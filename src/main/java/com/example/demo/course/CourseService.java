@@ -1,8 +1,8 @@
 package com.example.demo.course;
 
-import com.example.demo.customsException.NotFoundHandler;
 import com.example.demo.department.Department;
 import com.example.demo.department.DepartmentRepository;
+import com.example.demo.response.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class CourseService {
         if (course.isPresent()) {
             return ResponseEntity.ok(course.get());
         }
-        throw new NotFoundHandler("Course with id=" + course_id + " not found");
+        throw new NotFoundException("Course with id=" + course_id + " not found");
     }
 
     public ResponseEntity<HttpStatus> createCourse(Course course, Long departmentId) {
@@ -41,7 +41,7 @@ public class CourseService {
             courseRepository.save(course);
             return ResponseEntity.ok().build();
         }
-        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
+        throw new NotFoundException("Department with id=" + departmentId + " not found");
     }
 
     public ResponseEntity<HttpStatus> removeCourse(Long courseId) {
@@ -50,7 +50,7 @@ public class CourseService {
             courseRepository.deleteById(courseId);
             return ResponseEntity.noContent().build();
         }
-        throw new NotFoundHandler("Course with id=" + courseId + " not found");
+        throw new NotFoundException("Course with id=" + courseId + " not found");
     }
 
     public ResponseEntity<Course> updateCourse(Long courseId, Course updatedCourse) {
@@ -69,6 +69,6 @@ public class CourseService {
             courseRepository.save(existingCourse);
             return ResponseEntity.ok(existingCourse);
         }
-        throw new NotFoundHandler("Course with id=" + courseId + " not found");
+        throw new NotFoundException("Course with id=" + courseId + " not found");
     }
 }

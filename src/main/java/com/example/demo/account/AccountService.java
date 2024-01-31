@@ -1,6 +1,6 @@
 package com.example.demo.account;
 
-import com.example.demo.customsException.NotFoundHandler;
+import com.example.demo.response.NotFoundException;
 import com.example.demo.role.Role;
 import com.example.demo.role.RoleRepository;
 import jakarta.transaction.Transactional;
@@ -36,14 +36,14 @@ public class AccountService {
             accountRepository.save(account);
             return ResponseEntity.created(URI.create("/api/v1/account/" + account.getAccountId())).build();
         }
-        throw new NotFoundHandler("Role with id=" + roleId + " not found");
+        throw new NotFoundException("Role with id=" + roleId + " not found");
     }
     public ResponseEntity<Optional<Account>> getAccount(Long accountId){
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isPresent()){
             return ResponseEntity.ok(account);
         }
-        throw new NotFoundHandler("Account with id=" + accountId + " not found");
+        throw new NotFoundException("Account with id=" + accountId + " not found");
     }
     public ResponseEntity<HttpStatus> deleteAccount(Long accountId){
         boolean isExist = accountRepository.existsById(accountId);
@@ -51,7 +51,7 @@ public class AccountService {
             accountRepository.deleteById(accountId);
             return ResponseEntity.noContent().build();
         }
-        throw new NotFoundHandler("Account with id=" + accountId + " not found");
+        throw new NotFoundException("Account with id=" + accountId + " not found");
     }
     public ResponseEntity<Iterable<Account>>getAllAccount() {
         return ResponseEntity.ok(accountRepository.findAll());

@@ -1,8 +1,8 @@
 package com.example.demo.student;
 
-import com.example.demo.customsException.NotFoundHandler;
 import com.example.demo.department.Department;
 import com.example.demo.department.DepartmentRepository;
+import com.example.demo.response.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class StudentService {
         if (student.isPresent()){
             return ResponseEntity.ok(student);
         }
-        throw new NotFoundHandler("Student with id=" + studentId + " not found");
+        throw new NotFoundException("Student with id=" + studentId + " not found");
     }
 
     public ResponseEntity<URI> addNewStudent(Student student, Long departmentId) {
@@ -42,7 +42,7 @@ public class StudentService {
             studentRepository.save(student);
             return ResponseEntity.created(URI.create("/api/v1/student/" + student.getStudentId())).build();
         }
-        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
+        throw new NotFoundException("Department with id=" + departmentId + " not found");
     }
 
     public ResponseEntity<HttpStatus> deleteStudent(Long studentId) {
@@ -51,7 +51,7 @@ public class StudentService {
             studentRepository.deleteById(studentId);
             return ResponseEntity.noContent().build();
         }
-        throw new NotFoundHandler("Student with id=" + studentId + " not found");
+        throw new NotFoundException("Student with id=" + studentId + " not found");
     }
 
     public ResponseEntity<Student> updateStudent(Long studentId, Student updateStudent) {
@@ -94,7 +94,7 @@ public class StudentService {
             studentRepository.save(existingStudent);
             return ResponseEntity.ok(existingStudent);
         }
-        throw new NotFoundHandler("Student with id=" + studentId + " not found");
+        throw new NotFoundException("Student with id=" + studentId + " not found");
     }
 
 }

@@ -72,7 +72,6 @@ public class Department {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonProperty
     @JoinColumn(name = "faculty_id" , referencedColumnName = "faculty_id")
     private Faculty faculty;
 
@@ -89,9 +88,6 @@ public class Department {
                 ", departmentName='" + departmentName + '\'' +
                 ", headName='" + headName + '\'' +
                 ", officeNumber=" + officeNumber +
-                ", faculty=" + faculty +
-                ", students=" + students +
-                ", courses=" + courses +
                 '}';
     }
 }

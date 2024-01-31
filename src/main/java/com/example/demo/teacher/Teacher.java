@@ -2,7 +2,6 @@ package com.example.demo.teacher;
 
 import com.example.demo.course.Course;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -11,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "Teachers")
-
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -120,7 +118,7 @@ public class Teacher {
                 ", Age=" + age+'\''+
                 ", Address" + address+'\''+
                 ", Phone Number" + phoneNumber+
-                ", Course Id" + courses+
+                ", Course" + courses+
                 '}';
     }
     public List<Course> getCourses() {

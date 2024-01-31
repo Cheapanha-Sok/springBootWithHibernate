@@ -1,8 +1,8 @@
 package com.example.demo.department;
 
-import com.example.demo.customsException.NotFoundHandler;
 import com.example.demo.faculty.Faculty;
 import com.example.demo.faculty.FacultyRepository;
+import com.example.demo.response.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class DepartmentService {
         if (department.isPresent()){
             return ResponseEntity.ok(department.get());
         }
-        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
+        throw new NotFoundException("Department with id=" + departmentId + " not found");
     }
 
     public ResponseEntity<URI> addNewDepartment(Department department, Long facultyId) {
@@ -42,7 +42,7 @@ public class DepartmentService {
             departmentRepository.save(department);
             return ResponseEntity.created(URI.create("/api/v1/department/" + department.getDepartmentId())).build();
         }
-        throw new NotFoundHandler("Faculty with id=" + facultyId + " not found");
+        throw new NotFoundException("Faculty with id=" + facultyId + " not found");
     }
 
     public ResponseEntity<HttpStatus> deleteDepartment(Long departmentId) {
@@ -51,7 +51,7 @@ public class DepartmentService {
             departmentRepository.deleteById(departmentId);
             return ResponseEntity.noContent().build();
         }
-        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
+        throw new NotFoundException("Department with id=" + departmentId + " not found");
     }
 
     public ResponseEntity<Department> updateDepartment(Long departmentId, Department updatedepartment) {
@@ -70,6 +70,6 @@ public class DepartmentService {
             departmentRepository.save(existingDepartment);
             return ResponseEntity.ok(existingDepartment);
         }
-        throw new NotFoundHandler("Department with id=" + departmentId + " not found");
+        throw new NotFoundException("Department with id=" + departmentId + " not found");
     }
 }

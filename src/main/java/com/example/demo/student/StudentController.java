@@ -6,7 +6,7 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "api/v1/student")
+@RequestMapping(path = "api/v1/student/")
 public class StudentController {
     private final StudentService studentService;
 

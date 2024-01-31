@@ -1,13 +1,12 @@
 package com.example.demo.faculty;
 
-import com.example.demo.customsException.NotFoundHandler;
+import com.example.demo.response.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +26,7 @@ public class FacultyService {
         if (faculty.isPresent()){
             return ResponseEntity.ok(faculty);
         }
-        throw new NotFoundHandler("Faculty with id=" + facultyId + "not found");
+        throw new NotFoundException("Faculty with id=" + facultyId + "not found");
     }
 
     public ResponseEntity<URI> createFaculty(Faculty faculty) {
@@ -41,7 +40,7 @@ public class FacultyService {
             facultyRepository.deleteById(facultyId);
             return ResponseEntity.noContent().build();
         }
-        throw new NotFoundHandler("Faculty with id=" + facultyId + "not found");
+        throw new NotFoundException("Faculty with id=" + facultyId + "not found");
     }
 
     public ResponseEntity<HttpStatus> updateFaculty(Long facultyId, Faculty updateFaculty ) {
@@ -60,6 +59,6 @@ public class FacultyService {
             facultyRepository.save(existingCourse);
             return ResponseEntity.ok().build();
         }
-        throw new NotFoundHandler("Faculty with id=" + facultyId + "not found");
+        throw new NotFoundException("Faculty with id=" + facultyId + "not found");
     }
 }

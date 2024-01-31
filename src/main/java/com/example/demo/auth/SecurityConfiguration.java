@@ -32,11 +32,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
     private final RSAKeyProperties key;
-    private final UserService userService;
 
-    public SecurityConfiguration(RSAKeyProperties key , UserService userService) {
+    public SecurityConfiguration(RSAKeyProperties key) {
         this.key = key;
-        this.userService = userService;
     }
 
     @Bean
@@ -69,7 +67,6 @@ public class SecurityConfiguration {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authenticationProvider);
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

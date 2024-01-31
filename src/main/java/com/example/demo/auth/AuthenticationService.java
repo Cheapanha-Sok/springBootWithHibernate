@@ -19,7 +19,7 @@ public class AuthenticationService {
         this.tokenService = tokenService;
     }
 
-    public ResponseEntity<?> loginUser(String email, String password){
+    public ResponseEntity<LoginResponseDTO> loginUser(String email, String password){
         try{
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)

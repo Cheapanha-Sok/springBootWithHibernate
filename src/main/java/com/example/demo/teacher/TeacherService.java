@@ -2,7 +2,7 @@ package com.example.demo.teacher;
 
 import com.example.demo.course.Course;
 import com.example.demo.course.CourseRepository;
-import com.example.demo.customsException.NotFoundHandler;
+import com.example.demo.response.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class TeacherService {
         if (teacher.isPresent()){
             return ResponseEntity.ok(teacher);
         }
-        throw new NotFoundHandler("Teacher with id" + teacherId + " not found");
+        throw new NotFoundException("Teacher with id" + teacherId + " not found");
     }
 
     public ResponseEntity<URI> createTeacher(Teacher teacher , Long courseId) {
@@ -38,7 +38,7 @@ public class TeacherService {
             teacherRepository.save(teacher);
             return ResponseEntity.created(URI.create("/api/v1/teacher/" + teacher.getTeacherId())).build();
         }
-        throw new NotFoundHandler("Course with id" + courseId + " not found");
+        throw new NotFoundException("Course with id" + courseId + " not found");
 
     }
 
@@ -48,7 +48,7 @@ public class TeacherService {
             teacherRepository.deleteById(teacher_id);
             return ResponseEntity.noContent().build();
         }
-        throw new NotFoundHandler("Teacher with id" + teacher_id + " not found");
+        throw new NotFoundException("Teacher with id" + teacher_id + " not found");
 
     }
 
@@ -74,6 +74,6 @@ public class TeacherService {
             teacherRepository.save(existingTeacher);
             return ResponseEntity.ok(existingTeacher);
         }
-        throw new NotFoundHandler("Teacher with id" + teacherId + " not found");
+        throw new NotFoundException("Teacher with id" + teacherId + " not found");
     }
 }

@@ -1,6 +1,6 @@
 package com.example.demo.role;
 
-import com.example.demo.customsException.NotFoundHandler;
+import com.example.demo.response.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class RoleService {
+public class  RoleService {
     private final RoleRepository roleRepository;
 
     @Autowired
@@ -27,7 +27,7 @@ public class RoleService {
         if (role.isPresent()){
             return ResponseEntity.ok(role);
         }
-        throw new NotFoundHandler("Role with id=" + roleId + " not found");
+        throw new NotFoundException("Role with id=" + roleId + " not found");
 
     }
     public ResponseEntity<URI> createRole(Role role) {
@@ -41,7 +41,7 @@ public class RoleService {
             roleRepository.deleteById(roleId);
             return ResponseEntity.noContent().build();
         }
-        throw new NotFoundHandler("Role with id=" + roleId + " not found");
+        throw new NotFoundException("Role with id=" + roleId + " not found");
     }
     public ResponseEntity<Role> updateRole(Long roleId, Role updatedRole) {
         Optional<Role> roleOptional = roleRepository.findById(roleId);
@@ -53,6 +53,6 @@ public class RoleService {
             roleRepository.save(existingRole);
             return ResponseEntity.ok(existingRole);
         }
-        throw new NotFoundHandler("Role with id=" + roleId + " not found");
+        throw new NotFoundException("Role with id=" + roleId + " not found");
     }
 }
