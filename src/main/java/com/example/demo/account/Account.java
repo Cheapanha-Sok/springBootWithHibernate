@@ -2,6 +2,8 @@ package com.example.demo.account;
 
 import com.example.demo.role.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,17 +13,17 @@ import java.util.List;
 
 @Entity
 @Table(name = "Account" , uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-
 public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_id",nullable = false)
+    @Column(name = "account_id")
     private Long accountId;
-    @Column(name = "username",nullable = false , length = 20)
+    @Column(name = "username")
     private String userName;
-    @Column(name = "email" , nullable = false , length = 50)
+    @Column(name = "email")
+    @Email
     private String email;
-    @Column(name = "password",nullable = false , length = 60)
+    @Column(name = "password")
     private String password;
 
     public Account(){
@@ -45,30 +47,6 @@ public class Account implements UserDetails {
         return accountId;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
-    }
-
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
 
     @ManyToMany
     @JoinTable(name = "users_roles",
@@ -109,13 +87,35 @@ public class Account implements UserDetails {
         return true;
     }
 
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void setPassword(String encode) {
+        this.password = encode;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
-                " Account Id=" + accountId +
-                ", User Name=" + userName + '\'' +
-                ", Email=" + email + '\'' +
-                ", Password=" + password +
+                "accountId=" + accountId +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
                 '}';
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

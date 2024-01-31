@@ -19,11 +19,6 @@ public class Role implements GrantedAuthority {
 
     }
 
-    @Override
-    public String toString() {
-        return super.toString();
-    }
-
     public Long getRoleId() {
         return roleId;
     }
@@ -44,6 +39,9 @@ public class Role implements GrantedAuthority {
         this.roleId=roleId;
         this.authority=authority;
     }
+    public Role( String authority){
+        this.authority=authority;
+    }
     @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
     private List<Account> accounts;
 
@@ -55,5 +53,14 @@ public class Role implements GrantedAuthority {
 
     public void setAuthority(String authority) {
         this.authority = authority;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "roleId=" + roleId +
+                ", authority='" + authority + '\'' +
+                ", accounts=" + accounts +
+                '}';
     }
 }

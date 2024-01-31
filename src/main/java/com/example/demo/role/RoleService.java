@@ -32,6 +32,7 @@ public class RoleService {
     }
     public ResponseEntity<URI> createRole(Role role) {
         roleRepository.save(role);
+        System.out.println(role);
         return ResponseEntity.created(URI.create("/api/v1/role/" + role.getRoleId())).build();
     }
     public ResponseEntity<HttpStatus> deleteRole(Long roleId){

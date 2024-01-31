@@ -29,12 +29,21 @@ public class AccountService {
     public ResponseEntity<URI> createAccount(Account account, Long roleId) {
         Optional<Role> role = roleRepository.findById(roleId);
         if (role.isPresent()){
+
             account.setRoles(List.of(role.get()));
             account.setPassword(passwordEncoder.encode(account.getPassword()));
+            System.out.println(account);
             accountRepository.save(account);
             return ResponseEntity.created(URI.create("/api/v1/account/" + account.getAccountId())).build();
         }
         throw new NotFoundHandler("Role with id=" + roleId + " not found");
+    }
+    public ResponseEntity<Optional<Account>> getAccount(Long accountId){
+        Optional<Account> account = accountRepository.findById(accountId);
+        if (account.isPresent()){
+            return ResponseEntity.ok(account);
+        }
+        throw new NotFoundHandler("Account with id=" + accountId + " not found");
     }
     public ResponseEntity<HttpStatus> deleteAccount(Long accountId){
         boolean isExist = accountRepository.existsById(accountId);

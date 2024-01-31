@@ -72,6 +72,7 @@ public class Department {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonProperty
     @JoinColumn(name = "faculty_id" , referencedColumnName = "faculty_id")
     private Faculty faculty;
 
