@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "api/v1/course/")
+@CrossOrigin("*")
 public class CourseController {
     private final CourseService courseService;
 
@@ -25,7 +26,7 @@ public class CourseController {
         return courseService.getCourse(courseId);
     }
 
-    @PostMapping(path = "{department_id}" ,headers = "content-type=text/json")
+    @PostMapping(path = "{department_id}")
     public ResponseEntity<HttpStatus> createCourse(@RequestBody Course course, @PathVariable("department_id") Long departmentId) {
         return courseService.createCourse(course, departmentId);
     }

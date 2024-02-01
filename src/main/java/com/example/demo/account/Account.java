@@ -96,7 +96,6 @@ public class Account implements UserDetails {
         this.password = encode;
     }
 
-
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }

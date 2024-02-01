@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
 @Service
 @Transactional
 public class AuthenticationService {
@@ -19,18 +20,21 @@ public class AuthenticationService {
         this.tokenService = tokenService;
     }
 
-    public ResponseEntity<LoginResponseDTO> loginUser(String email, String password){
+    public ResponseEntity<LoginResponse> loginUser(String email, String password){
         try{
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
             );
             String token = tokenService.generateJwt(auth);
             Account account = (Account) auth.getPrincipal();
-            LoginResponseDTO loginResponseDTO = new LoginResponseDTO(account, token);
-            return ResponseEntity.ok(loginResponseDTO);
+            LoginResponse response = new LoginResponse(account , token);
+            return ResponseEntity.ok(response);
         }catch (BadCredentialsException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+    }
+
+    public record LoginResponse(Account account , String token) {
     }
 }

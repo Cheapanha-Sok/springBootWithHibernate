@@ -20,4 +20,5 @@ public class GlobalResponse {
                 notFoundException.getMessage(),
                 LocalDateTime.now());
     }
+
 }

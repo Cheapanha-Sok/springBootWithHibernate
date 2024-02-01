@@ -27,6 +27,11 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -38,34 +43,23 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth ->
-                {
-                    auth.requestMatchers("/auth/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET,"/api/v1/**").hasAnyRole("USER" , "ADMIN");
-                    auth.requestMatchers(HttpMethod.POST,"/api/v1/**").hasRole("ADMIN");
-                    auth.requestMatchers(HttpMethod.DELETE,"/api/v1/**").hasRole("ADMIN");
-                    auth.requestMatchers(HttpMethod.PUT,"/api/v1/**").hasRole("ADMIN");
-                    auth.anyRequest().authenticated();
-                })
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        )
-                )
-                .httpBasic(Customizer.withDefaults());
-        return http.build();
-    }
-
-    @Bean
     public AuthenticationManager authenticationManager(
             UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authenticationProvider);
+    }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowCredentials(true);
+        configuration.addAllowedHeader("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -90,7 +84,29 @@ public class SecurityConfiguration {
     @Bean
     public JwtEncoder jwtEncoder() {
         JWK jwk = new RSAKey.Builder(key.getPublicKey()).privateKey(key.getPrivateKey()).build();
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwks);
+        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwkSource);
     }
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(auth ->
+                {
+                    auth.requestMatchers("/auth/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/v1/**").hasAnyRole("USER", "ADMIN");
+                    auth.requestMatchers(HttpMethod.POST, "/api/v1/**").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/v1/**").hasRole("ADMIN");
+                    auth.anyRequest().authenticated();
+                })
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        )
+                );
+        return http.build();
+    }
+
 }
