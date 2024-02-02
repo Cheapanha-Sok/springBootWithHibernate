@@ -30,7 +30,7 @@ public class AuthenticationService {
             LoginResponse response = new LoginResponse(account , token);
             return ResponseEntity.ok(response);
         }catch (BadCredentialsException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
     }

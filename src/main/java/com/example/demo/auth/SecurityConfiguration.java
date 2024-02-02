@@ -17,7 +17,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -37,16 +36,39 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfiguration {
     private final RSAKeyProperties key;
+    private final UserService userService;
 
-    public SecurityConfiguration(RSAKeyProperties key) {
+    public SecurityConfiguration(RSAKeyProperties key , UserService userService) {
         this.key = key;
+        this.userService =  userService;
+    }
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(auth ->
+                {
+                    auth.requestMatchers("/auth/**").permitAll();
+//                    auth.requestMatchers("/api/v1/**").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.GET, "/api/v1/**").hasAnyRole( "ADMIN" , "USER");
+                    auth.requestMatchers(HttpMethod.POST, "/api/v1/**").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/v1/**").hasRole("ADMIN");
+                    auth.anyRequest().authenticated();
+                })
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        )
+                );
+        return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService) {
+    public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
+         authenticationProvider.setUserDetailsService(userService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authenticationProvider);
     }
@@ -87,26 +109,6 @@ public class SecurityConfiguration {
         JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwkSource);
     }
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth ->
-                {
-                    auth.requestMatchers("/auth/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/api/v1/**").hasAnyRole("USER", "ADMIN");
-                    auth.requestMatchers(HttpMethod.POST, "/api/v1/**").hasRole("ADMIN");
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole("ADMIN");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/v1/**").hasRole("ADMIN");
-                    auth.anyRequest().authenticated();
-                })
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        )
-                );
-        return http.build();
-    }
+
 
 }

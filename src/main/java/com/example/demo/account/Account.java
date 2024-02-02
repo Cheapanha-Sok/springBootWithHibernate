@@ -3,7 +3,6 @@ package com.example.demo.account;
 import com.example.demo.role.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -48,7 +47,7 @@ public class Account implements UserDetails {
     }
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns =@JoinColumn (name = "role_id"))

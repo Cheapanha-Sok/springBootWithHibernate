@@ -3,7 +3,6 @@ package com.example.demo.course;
 import com.example.demo.department.Department;
 import com.example.demo.teacher.Teacher;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_id")
     private Long courseId;
-    @Column(name = "course_name")
+    @Column(name = "course_name" , unique = true)
     private String courseName;
     @Column(name = "course_credit")
     private Float credit;

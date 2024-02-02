@@ -1,7 +1,7 @@
 package com.example.demo.faculty;
 
 import com.example.demo.response.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,10 +10,10 @@ import java.net.URI;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class FacultyService {
     private final FacultyRepository facultyRepository;
 
-    @Autowired
     public FacultyService(FacultyRepository facultyRepository) {
         this.facultyRepository = facultyRepository;
     }

@@ -1,6 +1,7 @@
 package com.example.demo.auth;
 
 import com.example.demo.account.AccountRepository;
+import com.example.demo.response.NotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +15,6 @@ public class UserService implements UserDetailsService {
     }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return accountRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("email is not valid"));
+        return accountRepository.findByEmail(email).orElseThrow(()-> new NotFoundException(String.format("User with email %s not found!" , email)));
     }
 }
