@@ -3,9 +3,7 @@ package com.example.demo.department;
 import com.example.demo.course.Course;
 import com.example.demo.faculty.Faculty;
 import com.example.demo.student.Student;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
